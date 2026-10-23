@@ -179,3 +179,27 @@ plt.xlim(0, n_c)
 plt.show()
 
 # optimized pulse
+seq = Sequence(reg, AnalogDevice)
+seq.declare_channel("ising", "rydberg_global")
+P = create_interp_pulse(RESULT.x[:m], RESULT.x[m:])
+seq.add(P, "ising")
+seq.draw()
+
+# simulate pulse
+simul = QutipBackendV2(seq)
+results = simul.run()
+sampling = results.final_state.sample(num_shots=N_samples)
+sampled_state = sum(
+    [np.sqrt(sampling[k] / 1000) * qutip.ket(k) for k in sampling.keys()]
+)
+
+s_neel_sampled = np.round(get_neel_structure_factor(reg, sampled_state), 3)
+most_freq = {k: v for k, v in sampling.items() if v > 10}
+
+print(f"Most frequent bitstrings measured ({N_samples} measurements)", most_freq)
+print(f"S_Neel (final_sampled) = {s_neel_sampled}")
+plt.bar(list(most_freq.keys()), list(most_freq.values()))
+plt.xticks(rotation="vertical")
+plt.show()
+
+# The optimization procedure presented here can be used to minimize other score functions. For instance, it can be used to find the solution of a QUBO problem or the Maximally Weighted Independent Set of a graph.
