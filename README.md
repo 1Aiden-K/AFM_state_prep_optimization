@@ -1,4 +1,4 @@
-# Environment and Dependency Setup
+# AFM State Prep with Neel Optimization and Bayesian Search
 
 ### Team: Psychics
 #### Challenge: Pasqal Neutral Atom Optimization
