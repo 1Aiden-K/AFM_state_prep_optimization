@@ -144,3 +144,38 @@ t2 = time.process_time()
 print("computed in", (t2 - t1), "sec")
 
 print(score(np.r_[amp_params, det_params]))
+
+# Bayesian search
+
+
+def sort_improv(RESULT):
+    score_vals = RESULT.func_vals
+    min = score_vals[0]
+    score_list = []
+    for s in score_vals:
+        if s < min:
+            min = s
+            score_list.append(min)
+        else:
+            score_list.append(min)
+    return score_list
+
+
+# parameters
+bounds = [(0.0, Omega_max)] * m + [(delta_0, delta_f)] * m
+
+n_r = 30
+n_c = 120
+
+RESULT = gp_minimize(score, bounds, n_random_starts=n_r, n_calls=n_c, verbose=False)
+
+# running and ploting
+fig = plt.figure()
+plt.semilogy(range(n_c), sort_improv(RESULT), "r-")
+plt.xlabel(r"$n_{calls}$", fontsize=14)
+plt.ylabel("Score reached", fontsize=14)
+plt.legend(["1 run"], fontsize=12)
+plt.xlim(0, n_c)
+plt.show()
+
+# optimized pulse
